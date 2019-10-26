@@ -91,6 +91,28 @@ func (h *operatorHandler) List(w http.ResponseWriter, r *http.Request) {
 	h.r.JSON(w, http.StatusOK, results)
 }
 
+func (h *operatorHandler) SetPrediction(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	regionIDStr := vars["id"]
+	regionID, err := strconv.ParseUint(regionIDStr, 10, 64)
+	if err != nil {
+		h.r.JSON(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err:=h.AddWarmupRegionOperator(regionID); err != nil {
+		h.r.JSON(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if err:=h.AddCompactRegionOperator(regionID, -1); err != nil {
+		h.r.JSON(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	h.r.JSON(w, http.StatusOK, nil)
+}
+
 func (h *operatorHandler) Post(w http.ResponseWriter, r *http.Request) {
 	var input map[string]interface{}
 	if err := apiutil.ReadJSONRespondError(h.r, w, r.Body, &input); err != nil {

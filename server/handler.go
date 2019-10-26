@@ -673,6 +673,42 @@ func (h *Handler) AddSplitRegionOperator(regionID uint64, policyStr string, keys
 	return nil
 }
 
+func (h *Handler) AddWarmupRegionOperator(regionID uint64) error {
+	c, err := h.getCoordinator()
+	if err != nil {
+		return err
+	}
+
+	region := c.cluster.GetRegion(regionID)
+	if region == nil {
+		return ErrRegionNotFound(regionID)
+	}
+
+	op := schedule.CreateWarmupOperator("admin-warmup-region", region, schedule.OpAdmin)
+	if ok := c.opController.AddOperator(op); !ok {
+		return errors.WithStack(ErrAddOperator)
+	}
+	return nil
+}
+
+func (h *Handler) AddCompactRegionOperator(regionID uint64, level int32) error {
+	c, err := h.getCoordinator()
+	if err != nil {
+		return err
+	}
+
+	region := c.cluster.GetRegion(regionID)
+	if region == nil {
+		return ErrRegionNotFound(regionID)
+	}
+
+	op := schedule.CreateCompactRegionOperator("admin-compact-region", region, schedule.OpAdmin, level)
+	if ok := c.opController.AddOperator(op); !ok {
+		return errors.WithStack(ErrAddOperator)
+	}
+	return nil
+}
+
 // AddScatterRegionOperator adds an operator to scatter a region.
 func (h *Handler) AddScatterRegionOperator(regionID uint64) error {
 	c, err := h.getCoordinator()

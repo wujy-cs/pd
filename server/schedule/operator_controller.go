@@ -521,6 +521,21 @@ func (oc *OperatorController) SendScheduleCommand(region *core.RegionInfo, step 
 			},
 		}
 		oc.hbStreams.SendMsg(region, cmd)
+	case CompactRegion:
+		cmd := &pdpb.RegionHeartbeatResponse{
+			CompactRegion: &pdpb.CompactRegion {
+				Level: st.Level,
+				Keys: [][]byte{st.StartKey, st.EndKey},
+			},
+		}
+		oc.hbStreams.SendMsg(region, cmd)
+	case WarmupRegion:
+		cmd := &pdpb.RegionHeartbeatResponse{
+			WarmupRegion: &pdpb.WarmupRegion {
+				Keys: [][]byte{st.StartKey, st.EndKey},
+			},
+		}
+		oc.hbStreams.SendMsg(region, cmd)
 	default:
 		log.Error("unknown operator step", zap.Reflect("step", step))
 	}

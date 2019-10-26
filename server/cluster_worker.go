@@ -191,6 +191,10 @@ func (c *RaftCluster) handleReportSplit(request *pdpb.ReportSplitRequest) (*pdpb
 	return &pdpb.ReportSplitResponse{}, nil
 }
 
+//func (c *RaftCluster) handleReportCompact(request *pdpb.ReportCompactRequest) (*pdpb.ReportCompactResponse, error) {
+//
+//}
+
 func (c *RaftCluster) handleBatchReportSplit(request *pdpb.ReportBatchSplitRequest) (*pdpb.ReportBatchSplitResponse, error) {
 	regions := request.GetRegions()
 

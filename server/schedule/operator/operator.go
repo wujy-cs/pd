@@ -379,7 +379,42 @@ func (sr SplitRegion) Influence(opInfluence OpInfluence, region *core.RegionInfo
 	}
 }
 
-// AddLightPeer is an OpStep that adds a region peer without considering the influence.
+type WarmupRegion struct {
+	StartKey, EndKey []byte
+}
+
+func (wr WarmupRegion) String() string {
+	return fmt.Sprintf("warmup region [%s, %s]", wr.StartKey, wr.EndKey)
+}
+
+// IsFinish checks if current step is finished.
+func (wr WarmupRegion) IsFinish(region *core.RegionInfo) bool {
+	return true
+}
+
+// Influence calculates the store difference that current step makes.
+func (wr WarmupRegion) Influence(opInfluence OpInfluence, region *core.RegionInfo) {
+}
+
+type CompactRegion struct {
+	StartKey, EndKey []byte
+	Level            int32
+}
+
+func (cr CompactRegion) String() string {
+	return fmt.Sprintf("compact region [%s, %s] to level %d", cr.StartKey, cr.EndKey, cr.Level)
+}
+
+// IsFinish checks if current step is finished.
+func (cr CompactRegion) IsFinish(region *core.RegionInfo) bool {
+	return true
+}
+
+// Influence calculates the store difference that current step makes.
+func (cr CompactRegion) Influence(opInfluence OpInfluence, region *core.RegionInfo) {
+}
+
+// AddLightPeer is an OperatorStep that adds a region peer without considering the influence.
 type AddLightPeer struct {
 	ToStore, PeerID uint64
 }
@@ -934,6 +969,23 @@ func CreateSplitRegionOperator(desc string, region *core.RegionInfo, kind OpKind
 	}
 	brief := fmt.Sprintf("split: region %v", region.GetID())
 	return NewOperator(desc, brief, region.GetID(), region.GetRegionEpoch(), kind, step)
+}
+
+func CreateWarmupRegionOperator(desc string, region *core.RegionInfo, kind OperatorKind) *Operator {
+	step := WarmupRegion{
+		StartKey: region.GetStartKey(),
+		EndKey: region.GetEndKey(),
+	}
+	return NewOperator(desc, region.GetID(), region.GetRegionEpoch(), kind, step)
+}
+
+func CreateCompactRegionOperator(desc string, region *core.RegionInfo, kind OperatorKind, level int32) *Operator {
+	step := CompactRegion{
+		StartKey: region.GetStartKey(),
+		EndKey: region.GetEndKey(),
+		Level: level,
+	}
+	return NewOperator(desc, region.GetID(), region.GetRegionEpoch(), kind, step)
 }
 
 func getRegionFollowerIDs(region *core.RegionInfo) []uint64 {
