@@ -119,11 +119,11 @@ func (h *operatorHandler) SetPrediction(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	if err:=h.AddCompactRegionOperator(uint64(regionID), -1); err != nil {
-		log.Error("add compact region error")
-		h.r.JSON(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+	//if err:=h.AddCompactRegionOperator(uint64(regionID), -1); err != nil {
+	//	log.Error("add compact region error")
+	//	h.r.JSON(w, http.StatusInternalServerError, err.Error())
+	//	return
+	//}
 
 	h.r.JSON(w, http.StatusOK, nil)
 }
