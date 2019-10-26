@@ -53,27 +53,27 @@ tools: pd-tso-bench pd-recover pd-analysis pd-heartbeat-bench
 pd-server: export GO111MODULE=on
 pd-server:
 ifeq ("$(WITH_RACE)", "1")
-	CGO_ENABLED=1 go build -race -gcflags '$(GCFLAGS)' -ldflags '$(LDFLAGS)' -o bin/pd-server cmd/pd-server/main.go
+	CGO_ENABLED=1 go build -mod=vendor -race -gcflags '$(GCFLAGS)' -ldflags '$(LDFLAGS)' -o bin/pd-server cmd/pd-server/main.go
 else
-	CGO_ENABLED=0 go build -gcflags '$(GCFLAGS)' -ldflags '$(LDFLAGS)' -o bin/pd-server cmd/pd-server/main.go
+	CGO_ENABLED=0 go build -mod=vendor -gcflags '$(GCFLAGS)' -ldflags '$(LDFLAGS)' -o bin/pd-server cmd/pd-server/main.go
 endif
 
 # Tools
 pd-ctl: export GO111MODULE=on
 pd-ctl:
-	CGO_ENABLED=0 go build -gcflags '$(GCFLAGS)' -ldflags '$(LDFLAGS)' -o bin/pd-ctl tools/pd-ctl/main.go
+	CGO_ENABLED=0 go build -mod=vendor -gcflags '$(GCFLAGS)' -ldflags '$(LDFLAGS)' -o bin/pd-ctl tools/pd-ctl/main.go
 pd-tso-bench: export GO111MODULE=on
 pd-tso-bench:
-	CGO_ENABLED=0 go build -o bin/pd-tso-bench tools/pd-tso-bench/main.go
+	CGO_ENABLED=0 go build -mod=vendor -o bin/pd-tso-bench tools/pd-tso-bench/main.go
 pd-recover: export GO111MODULE=on
 pd-recover:
-	CGO_ENABLED=0 go build -o bin/pd-recover tools/pd-recover/main.go
+	CGO_ENABLED=0 go build -mod=vendor -o bin/pd-recover tools/pd-recover/main.go
 pd-analysis: export GO111MODULE=on
 pd-analysis:
-	CGO_ENABLED=0 go build -gcflags '$(GCFLAGS)' -ldflags '$(LDFLAGS)' -o bin/pd-analysis tools/pd-analysis/main.go
+	CGO_ENABLED=0 go build -mod=vendor -gcflags '$(GCFLAGS)' -ldflags '$(LDFLAGS)' -o bin/pd-analysis tools/pd-analysis/main.go
 pd-heartbeat-bench: export GO111MODULE=on
 pd-heartbeat-bench:
-	CGO_ENABLED=0 go build -gcflags '$(GCFLAGS)' -ldflags '$(LDFLAGS)' -o bin/pd-heartbeat-bench tools/pd-heartbeat-bench/main.go
+	CGO_ENABLED=0 go build -mod=vendor -gcflags '$(GCFLAGS)' -ldflags '$(LDFLAGS)' -o bin/pd-heartbeat-bench tools/pd-heartbeat-bench/main.go
 
 test: retool-setup deadlock-setup
 	# testing...
@@ -138,11 +138,11 @@ endif
 
 simulator: export GO111MODULE=on
 simulator:
-	CGO_ENABLED=0 go build -o bin/pd-simulator tools/pd-simulator/main.go
+	CGO_ENABLED=0 go build -mod=vendor -o bin/pd-simulator tools/pd-simulator/main.go
 
 regions-dump: export GO111MODULE=on
 regions-dump:
-	CGO_ENABLED=0 go build -o bin/regions-dump tools/regions-dump/main.go
+	CGO_ENABLED=0 go build -mod=vendor -o bin/regions-dump tools/regions-dump/main.go
 
 clean-test:
 	rm -rf /tmp/test_pd*
