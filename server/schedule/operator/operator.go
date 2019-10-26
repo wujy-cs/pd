@@ -389,7 +389,7 @@ func (wr WarmupRegion) String() string {
 
 // IsFinish checks if current step is finished.
 func (wr WarmupRegion) IsFinish(region *core.RegionInfo) bool {
-	ireturn region.Warmup()
+	return region.Warmup()
 }
 
 // Influence calculates the store difference that current step makes.
@@ -406,7 +406,7 @@ func (cr CompactRegion) String() string {
 }
 
 // IsFinish checks if current step is finished.
-func (cr *CompactRegion) IsFinish(region *core.RegionInfo) bool {
+func (cr CompactRegion) IsFinish(region *core.RegionInfo) bool {
 	return region.Compact()
 }
 
@@ -975,7 +975,6 @@ func CreateWarmupRegionOperator(desc string, region *core.RegionInfo, kind Opera
 	step := WarmupRegion{
 		StartKey: region.GetStartKey(),
 		EndKey: region.GetEndKey(),
-		finished: false,
 	}
 	return NewOperator(desc, region.GetID(), region.GetRegionEpoch(), kind, step)
 }
@@ -985,7 +984,6 @@ func CreateCompactRegionOperator(desc string, region *core.RegionInfo, kind Oper
 		StartKey: region.GetStartKey(),
 		EndKey: region.GetEndKey(),
 		Level: level,
-		finished: false,
 	}
 	return NewOperator(desc, region.GetID(), region.GetRegionEpoch(), kind, step)
 }
