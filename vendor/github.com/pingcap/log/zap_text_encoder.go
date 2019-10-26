@@ -36,6 +36,7 @@ package log
 import (
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"math"
 	"strings"
 	"sync"
@@ -123,9 +124,10 @@ func putTextEncoder(enc *textEncoder) {
 
 type textEncoder struct {
 	*zapcore.EncoderConfig
-	buf            *buffer.Buffer
-	spaced         bool // include spaces after colons and commas
-	openNamespaces int
+	buf                 *buffer.Buffer
+	spaced              bool // include spaces after colons and commas
+	openNamespaces      int
+	disableErrorVerbose bool
 
 	// for encoding generic values by reflection
 	reflectBuf *buffer.Buffer
@@ -134,11 +136,29 @@ type textEncoder struct {
 
 // NewTextEncoder creates a fast, low-allocation Text encoder. The encoder
 // appropriately escapes all field keys and values.
-func NewTextEncoder(cfg zapcore.EncoderConfig) zapcore.Encoder {
+func NewTextEncoder(cfg *Config) zapcore.Encoder {
+	cc := zapcore.EncoderConfig{
+		// Keys can be anything except the empty string.
+		TimeKey:        "time",
+		LevelKey:       "level",
+		NameKey:        "name",
+		CallerKey:      "caller",
+		MessageKey:     "message",
+		StacktraceKey:  "stack",
+		LineEnding:     zapcore.DefaultLineEnding,
+		EncodeLevel:    zapcore.CapitalLevelEncoder,
+		EncodeTime:     DefaultTimeEncoder,
+		EncodeDuration: zapcore.StringDurationEncoder,
+		EncodeCaller:   ShortCallerEncoder,
+	}
+	if cfg.DisableTimestamp {
+		cc.TimeKey = ""
+	}
 	return &textEncoder{
-		EncoderConfig: &cfg,
-		buf:           _pool.Get(),
-		spaced:        false,
+		EncoderConfig:       &cc,
+		buf:                 _pool.Get(),
+		spaced:              false,
+		disableErrorVerbose: cfg.DisableErrorVerbose,
 	}
 }
 
@@ -370,6 +390,7 @@ func (enc *textEncoder) cloned() *textEncoder {
 	clone.EncoderConfig = enc.EncoderConfig
 	clone.spaced = enc.spaced
 	clone.openNamespaces = enc.openNamespaces
+	clone.disableErrorVerbose = enc.disableErrorVerbose
 	clone.buf = _pool.Get()
 	return clone
 }
@@ -431,10 +452,10 @@ func (enc *textEncoder) EncodeEntry(ent zapcore.Entry, fields []zapcore.Field) (
 		final.endQuoteFiled()
 	}
 	if enc.buf.Len() > 0 {
-		final.addElementSeparator()
+		final.buf.AppendByte(' ')
 		final.buf.Write(enc.buf.Bytes())
 	}
-	addFields(final, fields)
+	final.addFields(fields)
 	final.closeOpenNamespaces()
 	if ent.Stack != "" && final.StacktraceKey != "" {
 		final.beginQuoteFiled()
@@ -599,10 +620,37 @@ func (enc *textEncoder) tryAddRuneError(r rune, size int) bool {
 	return false
 }
 
-func addFields(enc *textEncoder, fields []zapcore.Field) {
-	for i := range fields {
+func (enc *textEncoder) addFields(fields []zapcore.Field) {
+	for _, f := range fields {
+		if f.Type == zapcore.ErrorType {
+			// handle ErrorType in pingcap/log to fix "[key=?,keyVerbose=?]" problem.
+			// see more detail at https://github.com/pingcap/log/pull/5
+			enc.encodeError(f)
+			continue
+		}
 		enc.beginQuoteFiled()
-		fields[i].AddTo(enc)
+		f.AddTo(enc)
 		enc.endQuoteFiled()
+	}
+}
+
+func (enc *textEncoder) encodeError(f zapcore.Field) {
+	err := f.Interface.(error)
+	basic := err.Error()
+	enc.beginQuoteFiled()
+	enc.AddString(f.Key, basic)
+	enc.endQuoteFiled()
+	if enc.disableErrorVerbose {
+		return
+	}
+	if e, isFormatter := err.(fmt.Formatter); isFormatter {
+		verbose := fmt.Sprintf("%+v", e)
+		if verbose != basic {
+			// This is a rich error type, like those produced by
+			// github.com/pkg/errors.
+			enc.beginQuoteFiled()
+			enc.AddString(f.Key+"Verbose", verbose)
+			enc.endQuoteFiled()
+		}
 	}
 }

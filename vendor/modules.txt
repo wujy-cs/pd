@@ -12,6 +12,8 @@ github.com/coreos/go-systemd/journal
 github.com/coreos/pkg/capnslog
 # github.com/dgrijalva/jwt-go v3.2.0+incompatible
 github.com/dgrijalva/jwt-go
+# github.com/docker/go-units v0.4.0
+github.com/docker/go-units
 # github.com/dustin/go-humanize v0.0.0-20180421182945-02af3965c54e
 github.com/dustin/go-humanize
 # github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
@@ -56,7 +58,7 @@ github.com/jonboulle/clockwork
 github.com/juju/ratelimit
 # github.com/mattn/go-shellwords v1.0.3
 github.com/mattn/go-shellwords
-# github.com/matttproud/golang_protobuf_extensions v1.0.0
+# github.com/matttproud/golang_protobuf_extensions v1.0.1
 github.com/matttproud/golang_protobuf_extensions/pbutil
 # github.com/montanaflynn/stats v0.0.0-20151014174947-eeaced052adb
 github.com/montanaflynn/stats
@@ -67,15 +69,15 @@ github.com/opentracing/opentracing-go/log
 github.com/pingcap/check
 # github.com/pingcap/errcode v0.0.0-20180921232412-a1a7271709d9
 github.com/pingcap/errcode
-# github.com/pingcap/errors v0.10.1
+# github.com/pingcap/errors v0.11.0
 github.com/pingcap/errors
 # github.com/pingcap/failpoint v0.0.0-20190512135322-30cc7431d99c
 github.com/pingcap/failpoint
-# github.com/pingcap/kvproto v0.0.0-20190516013202-4cf58ad90b6c => github.com/wujy-cs/kvproto v0.0.0-20191026012640-90d294b870e7
+# github.com/pingcap/kvproto v0.0.0-20191008063951-7a367e846b9f => github.com/wujy-cs/kvproto v0.0.0-20191026012640-90d294b870e7
 github.com/pingcap/kvproto/pkg/eraftpb
 github.com/pingcap/kvproto/pkg/metapb
 github.com/pingcap/kvproto/pkg/pdpb
-# github.com/pingcap/log v0.0.0-20190214045112-b37da76f67a7
+# github.com/pingcap/log v0.0.0-20190715063458-479153f07ebd
 github.com/pingcap/log
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
@@ -185,6 +187,7 @@ go.etcd.io/etcd/pkg/logutil
 go.etcd.io/etcd/pkg/netutil
 go.etcd.io/etcd/pkg/pathutil
 go.etcd.io/etcd/pkg/pbutil
+go.etcd.io/etcd/pkg/report
 go.etcd.io/etcd/pkg/runtime
 go.etcd.io/etcd/pkg/schedule
 go.etcd.io/etcd/pkg/srv
@@ -210,11 +213,11 @@ go.uber.org/zap/internal/bufferpool
 go.uber.org/zap/internal/color
 go.uber.org/zap/internal/exit
 go.uber.org/zap/zapcore
-# golang.org/x/crypto v0.0.0-20180608092829-8ac0e0d97ce4
+# golang.org/x/crypto v0.0.0-20190909091759-094676da4a83
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/ssh/terminal
-# golang.org/x/net v0.0.0-20180906233101-161cd47e91fd
+# golang.org/x/net v0.0.0-20190909003024-a7b16738d86b
 golang.org/x/net/context
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2
@@ -222,7 +225,7 @@ golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
-# golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e
+# golang.org/x/sys v0.0.0-20190909082730-f460065e899a
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 # golang.org/x/text v0.3.0
