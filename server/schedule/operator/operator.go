@@ -383,6 +383,11 @@ type WarmupRegion struct {
 	StartKey, EndKey []byte
 }
 
+// ConfVerChanged returns true if the conf version has been changed by this step
+func (wr WarmupRegion) ConfVerChanged(region *core.RegionInfo) bool {
+	return false
+}
+
 func (wr WarmupRegion) String() string {
 	return fmt.Sprintf("warmup region [%s, %s]", wr.StartKey, wr.EndKey)
 }
@@ -399,6 +404,11 @@ func (wr WarmupRegion) Influence(opInfluence OpInfluence, region *core.RegionInf
 type CompactRegion struct {
 	StartKey, EndKey []byte
 	Level            int32
+}
+
+// ConfVerChanged returns true if the conf version has been changed by this step
+func (cr CompactRegion) ConfVerChanged(region *core.RegionInfo) bool {
+	return false
 }
 
 func (cr CompactRegion) String() string {
@@ -971,21 +981,23 @@ func CreateSplitRegionOperator(desc string, region *core.RegionInfo, kind OpKind
 	return NewOperator(desc, brief, region.GetID(), region.GetRegionEpoch(), kind, step)
 }
 
-func CreateWarmupRegionOperator(desc string, region *core.RegionInfo, kind OperatorKind) *Operator {
+func CreateWarmupRegionOperator(desc string, region *core.RegionInfo, kind OpKind) *Operator {
 	step := WarmupRegion{
 		StartKey: region.GetStartKey(),
 		EndKey: region.GetEndKey(),
 	}
-	return NewOperator(desc, region.GetID(), region.GetRegionEpoch(), kind, step)
+	brief := fmt.Sprintf("warmup: region %v", region.GetID())
+	return NewOperator(desc, brief, region.GetID(), region.GetRegionEpoch(), kind, step)
 }
 
-func CreateCompactRegionOperator(desc string, region *core.RegionInfo, kind OperatorKind, level int32) *Operator {
+func CreateCompactRegionOperator(desc string, region *core.RegionInfo, kind OpKind, level int32) *Operator {
 	step := CompactRegion{
 		StartKey: region.GetStartKey(),
 		EndKey: region.GetEndKey(),
 		Level: level,
 	}
-	return NewOperator(desc, region.GetID(), region.GetRegionEpoch(), kind, step)
+	brief := fmt.Sprintf("compact: region %v", region.GetID())
+	return NewOperator(desc, brief, region.GetID(), region.GetRegionEpoch(), kind, step)
 }
 
 func getRegionFollowerIDs(region *core.RegionInfo) []uint64 {
