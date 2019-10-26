@@ -44,6 +44,7 @@ type RegionInfo struct {
 	interval        *pdpb.TimeInterval
 	warmuped        bool
 	compacted		bool
+
 }
 
 func (r *RegionInfo) Warmup() bool {
