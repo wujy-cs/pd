@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/pingcap/kvproto/pkg/metapb"
@@ -47,7 +48,13 @@ type RegionInfo struct {
 
 func (r *RegionInfo) Warmup() bool {
 	ret := r.warmuped
-	r.warmuped = true
+	if !ret {
+		r.warmuped = true
+		go func() {
+			time.Sleep(time.Minute)
+			r.warmuped = false
+		}()
+	}
 	return ret
 }
 
