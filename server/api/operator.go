@@ -141,6 +141,28 @@ func (h *operatorHandler) Post(w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch name {
+	case "warmup":
+		regionID, ok := input["region_id"].(float64)
+		if !ok {
+			h.r.JSON(w, http.StatusBadRequest, "missing region id")
+			return
+		}
+		if err:=h.AddWarmupRegionOperator(uint64(regionID)); err != nil {
+			log.Error("add warmup region error!")
+			h.r.JSON(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+	case "compact":
+		regionID, ok := input["region_id"].(float64)
+		if !ok {
+			h.r.JSON(w, http.StatusBadRequest, "missing region id")
+			return
+		}
+		if err:=h.AddCompactRegionOperator(uint64(regionID), -1); err != nil {
+			log.Error("add compact region error")
+			h.r.JSON(w, http.StatusInternalServerError, err.Error())
+			return
+		}
 	case "transfer-leader":
 		regionID, ok := input["region_id"].(float64)
 		if !ok {
