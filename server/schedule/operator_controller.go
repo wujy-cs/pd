@@ -521,7 +521,7 @@ func (oc *OperatorController) SendScheduleCommand(region *core.RegionInfo, step 
 			},
 		}
 		oc.hbStreams.SendMsg(region, cmd)
-	case CompactRegion:
+	case operator.CompactRegion:
 		cmd := &pdpb.RegionHeartbeatResponse{
 			CompactRegion: &pdpb.CompactRegion {
 				Level: st.Level,
@@ -529,7 +529,7 @@ func (oc *OperatorController) SendScheduleCommand(region *core.RegionInfo, step 
 			},
 		}
 		oc.hbStreams.SendMsg(region, cmd)
-	case WarmupRegion:
+	case operator.WarmupRegion:
 		cmd := &pdpb.RegionHeartbeatResponse{
 			WarmupRegion: &pdpb.WarmupRegion {
 				Keys: [][]byte{st.StartKey, st.EndKey},
