@@ -95,7 +95,7 @@ func (h *operatorHandler) List(w http.ResponseWriter, r *http.Request) {
 func (h *operatorHandler) SetPrediction(w http.ResponseWriter, r *http.Request) {
 	fmt.Errorf("!!!!!!!!!!!!!!!!!!\n")
 	var input map[string]interface{}
-	if err := readJSONRespondError(h.r, w, r.Body, &input); err != nil {
+	if err := apiutil.ReadJSONRespondError(h.r, w, r.Body, &input); err != nil {
 		return
 	}
 
