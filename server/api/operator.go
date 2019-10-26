@@ -14,6 +14,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -92,11 +93,15 @@ func (h *operatorHandler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *operatorHandler) SetPrediction(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	regionIDStr := vars["id"]
-	regionID, err := strconv.ParseUint(regionIDStr, 10, 64)
-	if err != nil {
-		h.r.JSON(w, http.StatusBadRequest, err.Error())
+	fmt.Errorf("!!!!!!!!!!!!!!!!!!\n")
+	var input map[string]interface{}
+	if err := readJSONRespondError(h.r, w, r.Body, &input); err != nil {
+		return
+	}
+
+	regionID, ok := input["id"].(uint64)
+	if !ok {
+		h.r.JSON(w, http.StatusBadRequest, "missing region id")
 		return
 	}
 
