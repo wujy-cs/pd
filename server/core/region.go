@@ -41,7 +41,22 @@ type RegionInfo struct {
 	approximateSize int64
 	approximateKeys int64
 	interval        *pdpb.TimeInterval
+	warmuped        bool
+	compacted		bool
 }
+
+func (r *RegionInfo) Warmup() bool {
+	ret := r.warmuped
+	r.warmuped = true
+	return ret
+}
+
+func (r *RegionInfo) Compact() bool {
+	ret := r.compacted
+	r.compacted = true
+	return ret
+}
+
 
 // NewRegionInfo creates RegionInfo with region's meta and leader peer.
 func NewRegionInfo(region *metapb.Region, leader *metapb.Peer, opts ...RegionCreateOption) *RegionInfo {

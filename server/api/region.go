@@ -350,26 +350,6 @@ func (h *regionsHandler) GetTopNRegions(w http.ResponseWriter, r *http.Request, 
 	h.rd.JSON(w, http.StatusOK, regionsInfo)
 }
 
-func (h *regionsHandler) SetPrediction(w http.ResponseWriter, r *http.Request) {
-	cluster := h.svr.GetRaftCluster()
-	if cluster == nil {
-		h.rd.JSON(w, http.StatusInternalServerError, server.ErrNotBootstrapped.Error())
-		return
-	}
-
-	vars := mux.Vars(r)
-	regionIDStr := vars["id"]
-	regionID, err := strconv.ParseUint(regionIDStr, 10, 64)
-	if err != nil {
-		h.rd.JSON(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	region :=
-
-	h.rd.JSON(w, http.StatusOK, nil)
-}
-
 // RegionHeap implements heap.Interface, used for selecting top n regions.
 type RegionHeap struct {
 	regions []*core.RegionInfo
