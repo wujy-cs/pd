@@ -37,7 +37,7 @@ func createRouter(prefix string, svr *server.Server) *mux.Router {
 	router.HandleFunc("/api/v1/operators", operatorHandler.Post).Methods("POST")
 	router.HandleFunc("/api/v1/operators/{region_id}", operatorHandler.Get).Methods("GET")
 	router.HandleFunc("/api/v1/operators/{region_id}", operatorHandler.Delete).Methods("DELETE")
-	router.HandleFunc("/api/v1/operators/prediction", operatorHandler.SetPrediction).Methods("POST")
+	router.HandleFunc("/api/v1/operators/prediction/{region_id}", operatorHandler.SetPrediction).Methods("GET")
 
 	schedulerHandler := newSchedulerHandler(handler, rd)
 	router.HandleFunc("/api/v1/schedulers", schedulerHandler.List).Methods("GET")
