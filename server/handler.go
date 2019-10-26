@@ -684,7 +684,7 @@ func (h *Handler) AddWarmupRegionOperator(regionID uint64) error {
 		return ErrRegionNotFound(regionID)
 	}
 
-	op := schedule.CreateWarmupRegionOperator("admin-warmup-region", region, schedule.OpAdmin)
+	op := operator.CreateWarmupRegionOperator("admin-warmup-region", region, operator.OpAdmin)
 	if ok := c.opController.AddOperator(op); !ok {
 		return errors.WithStack(ErrAddOperator)
 	}
@@ -702,7 +702,7 @@ func (h *Handler) AddCompactRegionOperator(regionID uint64, level int32) error {
 		return ErrRegionNotFound(regionID)
 	}
 
-	op := schedule.CreateCompactRegionOperator("admin-compact-region", region, schedule.OpAdmin, level)
+	op := operator.CreateCompactRegionOperator("admin-compact-region", region, operator.OpAdmin, level)
 	if ok := c.opController.AddOperator(op); !ok {
 		return errors.WithStack(ErrAddOperator)
 	}
