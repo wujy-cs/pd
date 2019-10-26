@@ -22,6 +22,7 @@ import (
 	"github.com/pingcap/pd/server"
 	"github.com/pingcap/pd/server/schedule/operator"
 	"github.com/unrolled/render"
+	"github.com/pingcap/log"
 )
 
 type operatorHandler struct {
@@ -92,23 +93,34 @@ func (h *operatorHandler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *operatorHandler) SetPrediction(w http.ResponseWriter, r *http.Request) {
-	var input map[string]interface{}
-	if err := apiutil.ReadJSONRespondError(h.r, w, r.Body, &input); err != nil {
+	//var input map[string]interface{}
+	//if err := apiutil.ReadJSONRespondError(h.r, w, r.Body, &input); err != nil {
+	//	return
+	//}
+	//
+	//regionID, ok := input["id"].(float64)
+	//if !ok {
+	//	h.r.JSON(w, http.StatusBadRequest, "missing region id")
+	//	return
+	//}
+
+	id := mux.Vars(r)["region_id"]
+
+	regionID, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		log.Error("parse error!")
+		h.r.JSON(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	regionID, ok := input["id"].(uint64)
-	if !ok {
-		h.r.JSON(w, http.StatusBadRequest, "missing region id")
-		return
-	}
-
-	if err:=h.AddWarmupRegionOperator(regionID); err != nil {
+	if err:=h.AddWarmupRegionOperator(uint64(regionID)); err != nil {
+		log.Error("add warmup region error!")
 		h.r.JSON(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	if err:=h.AddCompactRegionOperator(regionID, -1); err != nil {
+	if err:=h.AddCompactRegionOperator(uint64(regionID), -1); err != nil {
+		log.Error("add compact region error")
 		h.r.JSON(w, http.StatusInternalServerError, err.Error())
 		return
 	}
